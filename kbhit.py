@@ -85,6 +85,7 @@ class KBHit:
     def kbhit(self):
         ''' Returns True if keyboard character was hit, False otherwise.
         '''
+
         if os.name == 'nt':
             return msvcrt.kbhit()
 

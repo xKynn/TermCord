@@ -14,6 +14,7 @@ class TermCord(discord.Client):
         self.current_channel = None
         with open('config.json') as f:
             conf = json.load(f)
+
         self.token = conf['token']
         self.pause_input = False
 
