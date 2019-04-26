@@ -60,6 +60,8 @@ class TermCord(discord.Client):
             self.loop.create_task(self.menu())
         elif self.current_channel:
             self.loop.create_task(self.current_channel.send(message))
+        else:
+            sys.stdout.write("Channel not selected, message discarded.")
 
     def input_loop(self):
         message = []
