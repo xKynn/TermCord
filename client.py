@@ -10,7 +10,7 @@ kb = KBHit()
 class TermCord(discord.Client):
     def __init__(self):
         super().__init__()
-        self.messages = Queue()
+        #self.messages = Queue()
         self.current_channel = None
         with open('config.json') as f:
             conf = json.load(f)
@@ -26,8 +26,12 @@ class TermCord(discord.Client):
 
     async def initialize_chat(self, channel):
         messages = await channel.history(limit=20).flatten()
-        list(map(print, reversed([f"{message.author.display_name}#{message.author.discriminator}: {message.content}"
-                        for message in messages])))
+        for message in reversed(messages):
+            txt = message.content
+            for member in message.mentions:
+                #print("MENTION", member.mention)
+                txt = txt.replace(member.mention.replace('!', ''), f"@{member.name}#{member.discriminator}")
+            print(f"{message.author.display_name}#{message.author.discriminator}: {txt}")
 
     async def menu(self):
         self.current_channel = None
@@ -58,7 +62,7 @@ class TermCord(discord.Client):
         if message == ">menu":
             self.pause_input = True
             self.loop.create_task(self.menu())
-        elif self.current_channel:
+        elif self.current_channel and message:
             self.loop.create_task(self.current_channel.send(message))
         else:
             sys.stdout.write("Channel not selected, message discarded.")
@@ -86,4 +90,7 @@ class TermCord(discord.Client):
 
     async def on_message(self, message):
         if message.channel == self.current_channel:
-            print(f"{message.author.display_name}#{message.author.discriminator}: {message.content}")
+            txt = message.content
+            for member in message.mentions:
+                txt = txt.replace(member.mention, f"@{member.name}#{member.discriminator}")
+            print(f"{message.author.display_name} ({message.author.name}#{message.author.discriminator}): {txt}")
